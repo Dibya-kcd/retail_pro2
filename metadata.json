@@ -1,0 +1,5 @@
+{
+  "name": "DMS Pro: FMCG Distribution Management",
+  "description": "A comprehensive Distribution Management System for FMCG distributors, featuring Realtime Database integration, Sales Force Automation, and native Mobile support for Android and iOS.",
+  "requestFramePermissions": ["geolocation"]
+}

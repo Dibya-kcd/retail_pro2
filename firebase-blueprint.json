@@ -1,0 +1,140 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System user with role-based access",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "enum": ["Super Admin", "Distribution Manager", "Sales Manager", "Sales Representative", "Warehouse Manager", "Warehouse Operator", "Accounts Executive", "MIS Analyst"] },
+        "territories": { "type": "array", "items": { "type": "string" } },
+        "companyId": { "type": "string" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["uid", "name", "role", "companyId"]
+    },
+    "Company": {
+      "title": "Company",
+      "description": "Principal or Distribution entity",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "code": { "type": "string" },
+        "type": { "enum": ["Principal", "Distributor"] },
+        "status": { "enum": ["Active", "Inactive"] }
+      },
+      "required": ["id", "name", "code", "type"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "SKU details for various company products",
+      "type": "object",
+      "properties": {
+        "sku": { "type": "string" },
+        "name": { "type": "string" },
+        "brand": { "type": "string" },
+        "category": { "type": "string" },
+        "mrp": { "type": "number" },
+        "distributorPrice": { "type": "number" },
+        "ptr": { "type": "number", "description": "Price to Retailer" },
+        "pts": { "type": "number", "description": "Price to Stockist" },
+        "gstRate": { "type": "number" },
+        "caseSize": { "type": "number" },
+        "stock": { "type": "number" },
+        "reorderLevel": { "type": "number" }
+      },
+      "required": ["sku", "name", "brand", "ptr"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Retailer or Wholesaler details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "enum": ["retailer", "wholesaler"] },
+        "address": { "type": "string" },
+        "location": { "type": "object", "properties": { "lat": { "type": "number" }, "lng": { "type": "number" } } },
+        "beatId": { "type": "string" },
+        "creditLimit": { "type": "number" },
+        "outstanding": { "type": "number" },
+        "gstin": { "type": "string" }
+      },
+      "required": ["id", "name", "type"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Sales order details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "salesRepId": { "type": "string" },
+        "items": { "type": "array", "items": { "type": "object" } },
+        "totalAmount": { "type": "number" },
+        "status": { "enum": ["pending", "approved", "picked", "dispatched", "delivered", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "customerId", "items", "status"]
+    },
+    "Batch": {
+      "title": "Batch",
+      "description": "Product batch with expiry tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sku": { "type": "string" },
+        "batchNumber": { "type": "string" },
+        "expiryDate": { "type": "string", "format": "date" },
+        "quantity": { "type": "number" }
+      },
+      "required": ["id", "sku", "batchNumber", "expiryDate", "quantity"]
+    },
+    "StockMovement": {
+      "title": "StockMovement",
+      "description": "Log of all stock changes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sku": { "type": "string" },
+        "type": { "enum": ["inward", "outward", "adjustment", "return"] },
+        "quantity": { "type": "number" },
+        "reason": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "sku", "type", "quantity", "timestamp"]
+    },
+    "Scheme": {
+      "title": "Scheme",
+      "description": "Trade schemes and offers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "sku": { "type": "string" },
+        "type": { "enum": ["buy_x_get_y", "discount_percentage", "flat_discount"] },
+        "buyQty": { "type": "number" },
+        "getQty": { "type": "number" },
+        "discountValue": { "type": "number" },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "name", "type", "startDate", "endDate"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": "User", "description": "User profiles" },
+    "/companies/{id}": { "schema": "Company", "description": "Company master" },
+    "/products/{sku}": { "schema": "Product", "description": "Product master" },
+    "/customers/{id}": { "schema": "Customer", "description": "Customer master" },
+    "/orders/{id}": { "schema": "Order", "description": "Sales orders" },
+    "/batches/{id}": { "schema": "Batch", "description": "Product batches" },
+    "/movements/{id}": { "schema": "StockMovement", "description": "Stock movement logs" },
+    "/schemes/{id}": { "schema": "Scheme", "description": "Trade schemes and offers" }
+  }
+}
